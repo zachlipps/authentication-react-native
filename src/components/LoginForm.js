@@ -16,12 +16,25 @@ class LoginForm extends Component {
     this.setState({ error: '', loading: true });
 
     firebase.auth().signInWithEmailAndPassword(email, password)
+      .then(() => this.onLoginSuccess.bind(this))
       .catch(() => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
-          .catch(() => {
-            this.setState({ error: 'Auth failed' });
-          });
+          .then(() => this.onLoginSuccess.bind(this))
+          .catch(() => this.onLoginFail.bind(this));
       });
+  }
+
+  onLoginSuccess() {
+    this.setState({
+      email: '',
+      password: '',
+      loading: false,
+      error: '',
+    });
+  }
+
+  onLoginFail() {
+    this.setState({ error: 'Authentication failed', loading: false });
   }
 
   renderButton() {
