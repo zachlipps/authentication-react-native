@@ -2,11 +2,13 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import firebase from 'firebase';
 import LoginForm from './src/components/LoginForm';
-import { Header } from './src/components/common';
+import { Header, Button } from './src/components/common';
 
 
 export default class App extends
 Component {
+  state = { loggedIn: false }
+
   componentWillMount() {
     firebase.initializeApp({
       apiKey: 'AIzaSyA8cx5Cg6gIQYRsj1XNG-LXHRZU_zAAjfw',
@@ -17,7 +19,28 @@ Component {
       messagingSenderId: '14567537298',
 
     });
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ loggedIn: true });
+      } else {
+        this.setState({ loggedIn: false });
+      }
+    });
   }
+
+  renderContent() {
+    if (this.state.loggedIn) {
+      return (
+        <Button>
+          Log Out
+        </Button>
+      );
+    }
+    return <LoginForm />;
+  }
+
+
   render() {
     return (
       <View >
